@@ -1,0 +1,92 @@
+.App {
+  display: flex;
+  font-family: 'Roboto';
+  font-style: normal;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(223, 223, 223);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 171, 85);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: purple;
+}
+
+/* FADE ANIMATIONS */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 400ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 400ms;
+}
+
+/* SIDEBAR */
+
+.sidebar__button {
+  background: transparent;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 4px;
+  color: white;
+  transition: 0.3s linear;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 180px;
+  background: #15233d;
+  padding: 10px;
+  color: white;
+  transition: 0.4s ease-in;
+}
+
+.sidebar-closed {
+  min-width: 80px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar__listItem {
+  margin: 30px 10px;
+  display: flex;
+  height: 20px;
+}
+
+.sidebar__listItem span {
+  white-space: nowrap;
+}
+
+.sidebar__icon {
+  margin: 0 15px 0 0;
+}
+
+.content {
+  width: 100%;
+}

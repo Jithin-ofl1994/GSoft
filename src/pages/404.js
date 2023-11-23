@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Button, styled } from '@mui/material';
 import { Box } from '@mui/system';
 import { Link as RouterLink } from 'react-router-dom';
+import { green } from '@mui/material/colors';
 import image from '../images/404.svg';
 
 // style
@@ -25,7 +26,7 @@ const BoxStyle = styled(Box)(({ theme }) => ({
     objectFit: 'cover',
   },
   '& .MuiButton-root': {
-    backgroundColor: theme.palette.green.darker,
+    backgroundColor: green,
     color: '#fff',
     marginTop: 40,
   },

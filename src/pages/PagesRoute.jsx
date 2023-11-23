@@ -1,11 +1,17 @@
 import React from 'react';
 import CahracterListPage from './CharacterList';
+import CahracterDetails from './CahracterDetails';
 import ErrorPage from './404';
 
 const pagesData = [
   {
     path: '',
     element: <CahracterListPage />,
+    title: 'Lord OF Rings | CharacterList',
+  },
+  {
+    path: '/details',
+    element: <CahracterDetails />,
     title: 'Lord OF Rings | CharacterList',
   },
 

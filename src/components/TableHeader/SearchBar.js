@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Container, InputAdornment, TextField } from '@mui/material';
-
+import React, { useState, useCallback, useMemo } from 'react';
+import { InputAdornment, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 const SearchBar = ({ searchQuery }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-    searchQuery(event.target.value);
-  };
+  const handleChange = useCallback((event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+    searchQuery(value);
+  }, [searchQuery]);
 
-  return (
+  const searchBarComponent = useMemo(() => (
     <TextField
       id="search"
       type="search"
@@ -27,7 +27,9 @@ const SearchBar = ({ searchQuery }) => {
         ),
       }}
     />
-  );
+  ), [searchTerm, handleChange]);
+
+  return searchBarComponent;
 };
 
-export default SearchBar;
+export default React.memo(SearchBar);

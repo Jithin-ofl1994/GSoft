@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React, {memo} from 'react';
 import { useMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
@@ -43,4 +43,4 @@ const DrawerAppBar = () => {
   );
 };
 
-export default DrawerAppBar;
+export default memo(DrawerAppBar);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
@@ -12,44 +12,43 @@ import { TableContainer } from './StyledComponents';
 const CharacterTable = ({ filter }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([]);
-  const [tableData, setTableData] = useState([]);
+
   const data = useSelector((state) => state.character.data);
+  const PageSizeOptions = useMemo(() => [10, 20, 50], []);
+
+  const memoizedCharacterData = useMemo(() => data.map(({ _id, ...rest }) => ({ id: _id, ...rest })), [data]);
+
   const error = useSelector((state) => state.character.error);
-  const PageSizeOptions = [10, 20, 50];
 
-  const { offset, tottalCount, page } = useSelector(
-    (state) => state.character.pagination,
-  );
+  const handlePagination = useCallback((params) => {
+    if (offset < tottalCount && page < params.page) {
+      dispatch(getCaharacter({ data, offset, count: Math.max(...PageSizeOptions), page: params.page, filter }));
+    }
 
-  useEffect(() => {
-    dispatch(
-      getCaharacter({
-        data: [],
-        offset: 0,
-        count: Math.max(...PageSizeOptions),
-        page: paginationModel.page,
-        filter,
-      }),
-    );
+    setPaginationModel({
+      page: params.page,
+      pageSize: params.pageSize,
+    });
+  }, [dispatch, data, offset, tottalCount, page, filter, PageSizeOptions]);
+
+  const handleClose = useCallback((reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   }, []);
 
   useEffect(() => {
-    dispatch(
-      getCaharacter({
-        data: [],
-        offset: 0,
-        count: Math.max(...PageSizeOptions),
-        page: paginationModel.page,
-        filter,
-      }),
-    );
-  }, [filter]);
+    dispatch(getCaharacter({ data, offset: 0, count: Math.max(...PageSizeOptions), page: paginationModel.page, filter }));
+  }, [dispatch, data, PageSizeOptions, paginationModel.page, filter]);
 
   useEffect(() => {
     if (error) {
@@ -58,55 +57,23 @@ const CharacterTable = ({ filter }) => {
   }, [error]);
 
   useEffect(() => {
-    const updateData = data.map(({ _id, ...rest }) => ({
-      id: _id,
-      ...rest,
-    }));
+    const updateData = memoizedCharacterData.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
     setTableData(updateData);
-  }, [data]);
+  }, [memoizedCharacterData]);
 
   useEffect(() => {
     (async () => {
-      const newRows = await LoadData(
-        paginationModel.page,
-        paginationModel.pageSize,
-        tableData,
-      );
+      const newRows = await LoadData(paginationModel.page, paginationModel.pageSize, tableData);
       setRows(newRows);
     })();
   }, [paginationModel.page, paginationModel.pageSize, tableData]);
 
-  const handlePagination = (params) => {
-    if (offset < tottalCount && page < params.page) {
-      dispatch(
-        getCaharacter({
-          data,
-          offset,
-          count: Math.max(...PageSizeOptions),
-          page: params.page,
-          filter,
-        }),
-      );
-    }
-    setPaginationModel({
-      page: params.page,
-      pageSize: params.pageSize,
-    });
-  };
-
-  const handleClose = (reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-
-  const getDetails = async (id) => {
+  const getDetails = useCallback(async (id) => {
     await dispatch(getCaharacterById({ id }));
     navigate('/details');
-  };
+  }, [dispatch, navigate]);
 
-  const TableColumns = (cellinfo) => [
+  const TableColumns = useMemo(() => [
     {
       field: 'id',
       headerName: 'Id',
@@ -157,7 +124,7 @@ const CharacterTable = ({ filter }) => {
         </div>
       ),
     },
-  ];
+  ], []);
 
   return (
     <>
@@ -174,23 +141,15 @@ const CharacterTable = ({ filter }) => {
           rowCount={tottalCount}
           paginationModel={paginationModel}
           onPaginationModelChange={handlePagination}
-          columns={TableColumns()}
+          columns={TableColumns}
           disableColumnMenu
           slotProps={{
             pagination: { labelRowsPerPage: 'Limit' },
           }}
         />
       </TableContainer>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert
-          onClose={handleClose}
-          severity="error"
-          sx={{ width: '100%' }}
-        >
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
           Something went wrong!
         </Alert>
       </Snackbar>
@@ -198,4 +157,4 @@ const CharacterTable = ({ filter }) => {
   );
 };
 
-export default CharacterTable;
+export default memo(CharacterTable);

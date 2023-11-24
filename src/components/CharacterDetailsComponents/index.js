@@ -12,6 +12,7 @@ import { isEmptyObject } from '../../utils';
 
 const UserDetailsPage = () => {
   const navigate = useNavigate();
+  
   const charcterInfo = useSelector(
     (state) => state.character.selectedCharacter,
   );
